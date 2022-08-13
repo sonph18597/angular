@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+      integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+      integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+      crossorigin="anonymous"
+    ></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div ng-app="myApp">
+      <div ng-controller="product">
+        <main ng-view></main>
+      </div>
+    </div>
+    <script src="./js/lib/angular.min.js"></script>
+    <script src="./js/lib/angular-route.min.js"></script>
+
+    <script>
+      const app = angular.module("myApp", ["ngRoute"]);
+      app.config(function ($routeProvider) {
+        $routeProvider.
+        when("/product", {
+          templateUrl: "product.html",
+          controller: "product",
+        })
+        .when("/", {
+          templateUrl: "home.html",
+        })
+        .when("/product/:id/edit",{
+          templateUrl: "product-edit.html",
+          controller: "product",
+        })
+        .when("/product/add", {
+          templateUrl: "product-add.html",
+          controller: "product",
+        })
+      });
+      app.controller("product", function ($scope, $http,$routeParams) {
+        const API = "http://localhost:3000/product" ; 
+        $scope.productList = [];
+        $scope.product = {
+
+        };
+        const id = $routeParams.id;
+        const getProductList =  function() {
+            $http.get(API).then(({data}) => $scope.productList = data )
+        }
+
+        getProductList(); 
+
+        const getProductItem  = function () {
+          $http.get(`${API}/${id}`).then(({data}) =>
+          { $scope.product = data
+            console.log($scope.product)
+          } )
+        }
+        if(id){
+          getProductItem();
+        }
+      $scope.updateItem = function (e) {
+          e.preventDefault();
+          console.log($scope.product.id);
+          $http.put(`${API}/${$scope.product.id}`,$scope.product).then(() => {
+            window.location.href = "#!product"
+          })
+        }
+
+        $scope.removeItem = function (id) {
+           const confirm = window.confirm("Are you sure");
+           if(confirm){
+            $http
+            .delete(`${API}/${id}`)
+            .then( () => {
+              const newList = $scope.productList.filter( (item) => item.id != id );
+              $scope.productList = newList;
+            })
+           }
+        }
+
+        $scope.addItem = (e) => {
+          $http
+          .post(`${API}`,$scope.product)
+          .then( () => {
+            window.location.href = "./#!product";
+          })
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<div class="row">
+    <div class="col-md-6">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Product</li>          
+          </ul>
+    </div>
+    <div class="col-md-6">
+      <button><a href="#!product/add">Add</a></button>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#id</th>
+
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Image</th>
+                <th scope="col">Desc</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="item in productList">
+                <th scope="row">{{index + 1}}</th>
+                <td>{{item.name}}</td>
+                <td>{{item.price}}</td>
+                <td><img src="{{item.img}}" alt=""></td>
+                <td>{{item.desc}}</td>
+                <td>
+                  <button class="btn btn-danger" ng-click="removeItem(item.id)">
+                    Remove
+                  </button>
+                  <button class="btn btn-primary"><a href="#!product/{{item.id}}/edit">Update</a></button>
+                  
+                </td>
+              </tr>
+             
+            </tbody>
+          </table>
+    </div>
+
+
+</div>
